@@ -15,14 +15,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      # TODO: workaround for https://github.com/orgs/community/discussions/10553.
+      - uses: ASzc/change-string-case-action@v6
+        id: string
+        with:
+          string: ${{ github.repository }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
-          repository: ${{ github.repository }}
+          repository: ${{ steps.string.outputs.lowercase }}
           tag_with_ref: true
           add_git_labels: true
           always_pull: true
